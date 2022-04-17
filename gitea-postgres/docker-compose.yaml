@@ -1,31 +1,43 @@
+networks:
+  gitea_net:
+    external: false
+  postgres_db_net:
 services:
   gitea:
     image: gitea/gitea:latest
+    container_name: gitea
     environment:
       - DB_TYPE=postgres
-      - DB_HOST=db:5432
+      - DB_HOST=postgresdb:5432
       - DB_NAME=gitea
-      - DB_USER=gitea
-      - DB_PASSWD=gitea
+      - DB_USER=oner
+      - DB_PASSWD=(数据库密码)
     restart: always
     volumes:
       - git_data:/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
     ports:
       - 3000:3000
-  db:
+      - 222:22
+    depends_on:
+      - postgresdb
+    networks:
+      - gitea_net
+      - postgres_db_net
+  postgresdb:
     image: postgres:alpine
     environment:
-      - POSTGRES_USER=gitea
-      - POSTGRES_PASSWORD=gitea
+      - POSTGRES_USER=oner
+      - POSTGRES_PASSWORD=(数据库密码)
       - POSTGRES_DB=gitea
     restart: always
     volumes:
-      - db_data:/var/lib/postgresql/data
+      - postgres_db_data:/var/lib/postgresql/data
     expose:
       - 5432
+    networks:
+      - postgres_db_net
 volumes:
-  db_data:
+  postgres_db_data:
   git_data:
-  
-  
-    

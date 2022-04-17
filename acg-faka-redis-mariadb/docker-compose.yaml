@@ -1,0 +1,50 @@
+services:
+  faka2:
+    image: test/faka2
+    restart: always
+    ports:
+      - 84:80
+      - 9003:9000
+    environment:
+      WEB_DOCUMENT_ROOT: "/app"
+    # volumes:
+    #   - acg_faka_data:/app/.env
+    networks:
+      - redis_net
+      - maria_db_net
+    depends_on:
+      - mariadb
+      - redis
+
+  redis:
+    image: redis:alpine
+    restart: always
+    volumes:
+      - redis_data:/data
+    networks:
+      - redis_net
+    expose:
+      - 6379
+
+  mariadb:
+    image: mariadb:focal
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=(ROOT数据库密码)
+      - MYSQL_DATABASE=dujiaoka
+      - MYSQL_USER=dujiaoka
+      - MYSQL_PASSWORD=(数据库密码)
+    networks:
+      - maria_db_net
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    expose:
+      - 3306
+
+volumes:
+  mariadb_data:
+  acg_faka_data:
+  redis_data:
+networks:
+  maria_db_net:
+  redis_net:
