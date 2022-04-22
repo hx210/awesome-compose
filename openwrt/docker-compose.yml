@@ -1,0 +1,24 @@
+services:
+  openwrt:
+    image: rx21/openwrt:x86_64
+    container_name: openwrt-main
+    privileged: true
+    restart: always
+    labels:
+      - com.centurylinklabs.watchtower.monitor-only=true
+    # 仅监视(不更新)
+    networks:
+      - openwrt_net
+    dns:
+      - 127.0.0.1
+      - 223.5.5.5
+
+networks:
+  openwrt_net:
+    driver: macvlan
+    driver_opts:
+      parent: ens33
+    ipam:
+      config:
+        - subnet: 10.0.0.0/24
+          gateway: 10.0.0.1
